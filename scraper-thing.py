@@ -1,7 +1,9 @@
 import urllib3
-import httpx
+import requests
+import bs4
 
-example_response = httpx.request('get','http://www.example.com')
+
+example_response = requests.request('get','http://www.example.com')
 read_response = example_response.read()
 print(read_response)
 
