@@ -64,7 +64,7 @@ if __name__ == '__main__':
         print("We gave up. Too many tries, and they all failed.")
         print(gaveUp)
     except requests.Timeout as timed_out:
-        print("Connection timed out. Sorry.")
+        print("The connection timed out. Sorry.")
         print(timed_out)
     except Exception as e_unexpected:
         print(f"There was an unexpected error: {e_unexpected}")
