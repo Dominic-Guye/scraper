@@ -42,8 +42,12 @@ def read_response(resp: requests.models.Response) -> str:
 def scrape(html: str):
     '''Scrape an HTML document. HTML should be in the form of a string'''
     soup = bs4.BeautifulSoup(html,'html5lib')
-    while element_name != "NONE":
-        element_name = input("Which HTML element are you looking for? ")
+    while True: #  while = element_name != "NONE": # The commented-out code failed, the loop simply ignored it
+        element_name = input("Which HTML element are you looking for?\n(Type 'none' (case-insensitive) to exit)\nElement choice: ")
+        #If the user inputs 'none' (not case-sensitive), then exit loop
+        if element_name.lower() == "none":
+            print("Since you responded with 'none', we'll stop.\nThank you for scraping with us!")
+            break
         found_elements = soup.find_all(element_name)
         if isinstance(found_elements, list):
             for e in found_elements:
@@ -63,7 +67,7 @@ if __name__ == '__main__':
         print("Connection timed out. Sorry.")
         print(timed_out)
     except Exception as e_unexpected:
-        print(f"crap, there was an error: {e_unexpected}")
+        print(f"There was an unexpected error: {e_unexpected}")
     assert  page != None # sick of that weird "'page' is not defined" error.
     pagetext = read_response(page)
     scrape(pagetext)
