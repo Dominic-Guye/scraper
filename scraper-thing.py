@@ -52,6 +52,8 @@ def scrape(html: str):
         if isinstance(found_elements, list):
             for e in found_elements:
                 print(e)
+            if e == 0 or None:
+                print(Warning("The scraper was unable to find any elements of that type."))
 
 #the main function
 if __name__ == '__main__':
