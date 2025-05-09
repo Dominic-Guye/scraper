@@ -53,23 +53,27 @@ def scrape(html: str):
             for e in found_elements:
                 print(e)
             if e == 0 or None:
-                print(Warning("The scraper was unable to find any elements of that type."))
+                print(Warning("The scraper was unable to find any elements of that name."))
 
 #the main function
 if __name__ == '__main__':
-    #Note: I need to add exception handling
+    # page = None # Yet another attempt to avoid the "name 'page' is not defined" error.
     try:
         page = get_page()
+        pagetext = read_response(page)
+        scrape(pagetext)
     except requests.exceptions.HTTPError as http:
         print(f"Ugh. There was an HTTP status code! Specifically, it was {http}.")
-    except requests.exceptions.RetryError as gaveUp:
-        print("We gave up. Too many tries, and they all failed.")
-        print(gaveUp)
     except requests.Timeout as timed_out:
         print("The connection timed out. Sorry.")
         print(timed_out)
+    except requests.packages.urllib3.exceptions.NameResolutionError as failedToResolve:
+        print("We were unable to resolve that name to a particular IP address.\nEither the DNS servers are not functioning properly, or the website you requested simple does not exist.")
+        print(failedToResolve)
+    except requests.exceptions.ConnectionError as e_connection:
+        print(f"There was an unexpected connection-related error: {e_connection}")
+        if isinstance(e_connection.args[0],requests.packages.urllib3.exceptions.MaxRetryError):
+            print("The connection failed after multiple attempts.")
+            print(f"The reason? {e_connection.args[0].reason}") #print actual error that caused the failure
     except Exception as e_unexpected:
         print(f"There was an unexpected error: {e_unexpected}")
-    assert  page != None # sick of that weird "'page' is not defined" error.
-    pagetext = read_response(page)
-    scrape(pagetext)
