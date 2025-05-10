@@ -1,6 +1,7 @@
 import requests
 import bs4
 import html5lib
+from time import sleep # I need this to create artificial delays to allow users time to catch their breath
 
 #maybe I should make a function for requesting (+ maybe storing) and another for scraping
 ## Update: made a function for requesting, but storing will be hard bc of scope issues
@@ -39,36 +40,44 @@ def read_response(resp: requests.models.Response) -> str:
     elif text != None:
         raise requests.exceptions.RequestException(f"There was a response, but it was way too short. It consisted entirely of {print(example_read)}.")
 
-def scrape(html: str):
-    '''Scrape an HTML document. HTML should be in the form of a string'''
-    soup = bs4.BeautifulSoup(html,'html5lib')
-    while True: #  while = element_name != "NONE": # The commented-out code failed, the loop simply ignored it
-        element_name = input("Which HTML element are you looking for?\n(Type 'none' (case-insensitive) to exit)\nElement choice: ")
-        #If the user inputs 'none' (not case-sensitive), then exit loop
-        if element_name.lower() == "none":
-            print("Since you responded with 'none', we'll stop.\nThank you for scraping with us!") #farewell message
-            break
-        found_elements = soup.find_all(element_name) # main scrape operation
-        if isinstance(found_elements, list): # continue only if a list is returned. Since IDK if 'find_all' always returns a list
-            #print each found element on a new line
-            for e in found_elements:
-                print(e)
-            if e == 0 or None: # message if the element wasn't found
-                print(Warning("The scraper was unable to find any elements of that name."))
 def save_page(html: str): #save the html to a file
     from datetime import datetime
     title_tag = bs4.BeautifulSoup.find("title") # look for the page's title element
     title = title_tag.next
     title_v = title.replace("|","\u166") # replace pipes ('|') since they're common in titles and file systems hate them, and replace them with broken pipes ('¦')
-    with open(f"{title_v} \u2014 {datetime.now()}.html","wt") as file: #including date as part of the file name to ensure unique names
-        file.write()
-        file.close()
+    try: # I'm very concerned about IO errors, they are so common.
+        with open(f"{title_v} \u2014 {datetime.now()}.html","wt") as file: #including date as part of the file name to ensure unique names
+            file.write()
+            file.close()
+    except IOError as save_error:
+        print(f"There was an error when attempting to save the page to a file: {save_error}.\nOh well. Moving on to the rest of the program.")
+
+
+def scrape(html: str):
+    '''Scrape an HTML document. HTML should be in the form of a string'''
+    soup = bs4.BeautifulSoup(html,'html5lib')
+    while True: #  while = tag_name != "NONE": # The commented-out code failed, the loop simply ignored it
+        tag_name = input("Which HTML elements are you looking for?\nType the HTML tag name and we'll return all HTML elements in the page that match it.\n(Type 'none' (case-insensitive) to exit)\nElement choice: ")
+        #If the user inputs 'none' (not case-sensitive), then exit loop
+        if tag_name.lower() == "none":
+            print("Since you responded with 'none', we'll stop.\nThank you for scraping with us!") #farewell message
+            break
+        found_elements = soup.find_all(tag_name) # main scrape operation
+        if isinstance(found_elements, list): # continue only if a list is returned. Since IDK if 'find_all' always returns a list
+            #print each found element on a new line
+            print(f'Success! We found {len(found_elements)} element(s) that match {tag_name}!')
+            sleep(5)
+            for e in found_elements:
+                print(e)
+            if e == 0 or None: # message if the element wasn't found
+                print(Warning("The scraper was unable to find any elements of that tag name."))
 
 #the main function
 if __name__ == '__main__':
     try:
         page = get_page()
         pagetext = read_response(page)
+        save_page(pagetext)
         scrape(pagetext)
     except requests.exceptions.HTTPError as http:
         print(f"Ugh. There was an HTTP status code! Specifically, it was {http}.")
