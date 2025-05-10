@@ -54,10 +54,14 @@ def scrape(html: str):
                 print(e)
             if e == 0 or None:
                 print(Warning("The scraper was unable to find any elements of that name."))
+def save_page(html: str):
+    from datetime import datetime
+    with open(f"{datetime.now()}.html","wt") as file:
+        file.write()
+        file.close()
 
 #the main function
 if __name__ == '__main__':
-    # page = None # Yet another attempt to avoid the "name 'page' is not defined" error.
     try:
         page = get_page()
         pagetext = read_response(page)
