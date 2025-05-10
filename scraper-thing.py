@@ -46,17 +46,21 @@ def scrape(html: str):
         element_name = input("Which HTML element are you looking for?\n(Type 'none' (case-insensitive) to exit)\nElement choice: ")
         #If the user inputs 'none' (not case-sensitive), then exit loop
         if element_name.lower() == "none":
-            print("Since you responded with 'none', we'll stop.\nThank you for scraping with us!")
+            print("Since you responded with 'none', we'll stop.\nThank you for scraping with us!") #farewell message
             break
-        found_elements = soup.find_all(element_name)
-        if isinstance(found_elements, list):
+        found_elements = soup.find_all(element_name) # main scrape operation
+        if isinstance(found_elements, list): # continue only if a list is returned. Since IDK if 'find_all' always returns a list
+            #print each found element on a new line
             for e in found_elements:
                 print(e)
-            if e == 0 or None:
+            if e == 0 or None: # message if the element wasn't found
                 print(Warning("The scraper was unable to find any elements of that name."))
-def save_page(html: str):
+def save_page(html: str): #save the html to a file
     from datetime import datetime
-    with open(f"{datetime.now()}.html","wt") as file:
+    title_tag = bs4.BeautifulSoup.find("title") # look for the page's title element
+    title = title_tag.next
+    title_v = title.replace("|","\u166") # replace pipes ('|') since they're common in titles and file systems hate them, and replace them with broken pipes ('¦')
+    with open(f"{title_v} \u2014 {datetime.now()}.html","wt") as file: #including date as part of the file name to ensure unique names
         file.write()
         file.close()
 
