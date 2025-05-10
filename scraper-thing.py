@@ -3,17 +3,15 @@ import bs4
 import html5lib
 from time import sleep # I need this to create artificial delays to allow users time to catch their breath
 
-#maybe I should make a function for requesting (+ maybe storing) and another for scraping
-## Update: made a function for requesting, but storing will be hard bc of scope issues
-
 # the requesting function
 def get_page(url: str = None) -> requests.models.Response: #note: first ever type hint!
-    #if no url is given, use example.org
+    # Ask that the user input a URL if none was given
     if url == None:
-        inputted_url = input("What page do you want to request? Include the URL schema in your input. ")
-        if inputted_url != None:
+        inputted_url = input("What page do you want to request? Include the URL schema (we only support 'http://' and 'https://' for now) in your input. ")
+        if inputted_url != None and len(inputted_url) > 0:
             url = inputted_url
-        else:
+        else: #if no url is given, use example.org
+            print("It doesn't seem like you provided any input. We'll use http://example.org instead.")
             url = "http://example.org"
     #do the actual request
     try:
@@ -23,7 +21,7 @@ def get_page(url: str = None) -> requests.models.Response: #note: first ever typ
         response = requests.get("https://" + url)
     #do not continue and just raise an exception if there is an HTTP error code
     response.raise_for_status()
-
+    print("Recieved content from the page!")
     #return the response object as the function's output
     return response
 
@@ -31,33 +29,40 @@ def get_page(url: str = None) -> requests.models.Response: #note: first ever typ
 
 def read_response(resp: requests.models.Response) -> str:
     '''Given a requests Response object, return the HTML source code'''
+    print("Reading the page's response...")
     text = resp.text
     # Code to deny responses that are null or too short
     if len(text) > 10:
+        print("Response read! Length is not too short as to suggest an error.")
         return text
     elif len(text) in (None, 0):
         raise ValueError("The response was null or zero.")
     elif text != None:
-        raise requests.exceptions.RequestException(f"There was a response, but it was way too short. It consisted entirely of {print(example_read)}.")
+        raise requests.exceptions.RequestException(f"There was a response, but it was way too short. It consisted entirely of {print(text)}.")
 
 def save_page(html: str): #save the html to a file
+    print("Attempting to save the page to a file...")
     from datetime import datetime
-    title_tag = bs4.BeautifulSoup.find("title") # look for the page's title element
+    title_tag = bs4.BeautifulSoup(html,"html5lib").find("title") # look for the page's title element
     title = title_tag.next
-    title_v = title.replace("|","\u166") # replace pipes ('|') since they're common in titles and file systems hate them, and replace them with broken pipes ('¦')
+    title_v = title.replace("|","\u00a6") # replace pipes ('|') since they're common in titles and file systems hate them, and replace them with broken pipes ('¦')
+    constructed_file_name = f"{title_v} \u2014 {datetime.now().timestamp()}.html"
     try: # I'm very concerned about IO errors, they are so common.
-        with open(f"{title_v} \u2014 {datetime.now()}.html","wt") as file: #including date as part of the file name to ensure unique names
-            file.write()
+        with open(constructed_file_name, "wt") as file: #including date as part of the file name to ensure unique names
+            file.write(html)
             file.close()
+            print("File saved!")
     except IOError as save_error:
         print(f"There was an error when attempting to save the page to a file: {save_error}.\nOh well. Moving on to the rest of the program.")
-
+    except UnicodeEncodeError as encode_err:
+        print(f"There was an error when trying to encode page into Unicode: {encode_err}.\nOh well. Moving on to the rest of the program.")
 
 def scrape(html: str):
     '''Scrape an HTML document. HTML should be in the form of a string'''
+    print("Starting the true scraping process...")
     soup = bs4.BeautifulSoup(html,'html5lib')
     while True: #  while = tag_name != "NONE": # The commented-out code failed, the loop simply ignored it
-        tag_name = input("Which HTML elements are you looking for?\nType the HTML tag name and we'll return all HTML elements in the page that match it.\n(Type 'none' (case-insensitive) to exit)\nElement choice: ")
+        tag_name = input("Which HTML elements are you looking for?\nType the HTML tag name and we'll return all HTML elements in the page that match it.\n(Type 'none' (case-insensitive) to exit)\nTag name: ")
         #If the user inputs 'none' (not case-sensitive), then exit loop
         if tag_name.lower() == "none":
             print("Since you responded with 'none', we'll stop.\nThank you for scraping with us!") #farewell message
@@ -66,7 +71,9 @@ def scrape(html: str):
         if len(found_elements) > 0: # only if elements were actually found.
             #print each found element on a new line
             print(f'Success! We found {len(found_elements)} element(s) that match {tag_name}!')
-            sleep(5)
+            if len(found_elements) > 10:
+                print("Oh my. HERE THEY COME!")
+                sleep(5)
             for e in found_elements:
                 print(e)
         elif (len(found_elements) == 0) or (found_elements == None): # message if the element wasn't found
