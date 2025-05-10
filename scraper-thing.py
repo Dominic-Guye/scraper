@@ -94,3 +94,4 @@ if __name__ == '__main__':
             print(f"The reason? {e_connection.args[0].reason}") #print actual error that caused the failure
     except Exception as e_unexpected:
         print(f"There was an unexpected error: {e_unexpected}")
+        raise
