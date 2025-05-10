@@ -63,7 +63,7 @@ def scrape(html: str):
             print("Since you responded with 'none', we'll stop.\nThank you for scraping with us!") #farewell message
             break
         found_elements = soup.find_all(tag_name) # main scrape operation
-        if isinstance(found_elements, list): # continue only if a list is returned. Since IDK if 'find_all' always returns a list
+        if len(found_elements) > 0: # only if elements were actually found.
             #print each found element on a new line
             print(f'Success! We found {len(found_elements)} element(s) that match {tag_name}!')
             sleep(5)
