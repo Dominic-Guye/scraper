@@ -69,7 +69,7 @@ def scrape(html: str):
             sleep(5)
             for e in found_elements:
                 print(e)
-            if e == 0 or None: # message if the element wasn't found
+        elif (len(found_elements) == 0) or (found_elements == None): # message if the element wasn't found
                 print(Warning("The scraper was unable to find any elements of that tag name."))
 
 #the main function
