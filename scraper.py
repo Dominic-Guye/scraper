@@ -84,7 +84,9 @@ def scrape(html: str):
                 print(Warning(f"\t\tThe scraper was unable to find any elements of that tag name '{tag_name}'."))
 def redo_request():
     '''This function is to retry the scraping operation with a message if the get_page() web request fails.'''
+    sleep(1)
     print(("\n" * 5) + "Well that happened. Let's try this again.")
+    sleep(3)
     main()
 #the main function
 def main(URL : str = None):
