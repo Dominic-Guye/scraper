@@ -11,8 +11,8 @@ def get_page(url: str = None) -> requests.models.Response: #note: first ever typ
         if inputted_url != None and len(inputted_url) > 0:
             url = inputted_url
         else: #if no url is given, use example.org
-            print("\tIt doesn't seem like you provided any input. We'll use http://example.org instead.")
-            url = "http://example.org"
+            print("\tIt doesn't seem like you provided any input. We'll use https://example.org instead.")
+            url = "https://example.org"
     #do the actual request
     try:
         response = requests.get(url)
