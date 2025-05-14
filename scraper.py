@@ -1,3 +1,7 @@
+# Student: Dominic Guye
+# Teacher: Corin Dennison
+# Class: ITEC 1150
+
 import requests
 import bs4
 from time import sleep # I need this to create artificial delays to allow users time to catch their breath
