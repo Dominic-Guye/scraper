@@ -8,5 +8,8 @@ class TestCorrectClasses(unittest.TestCase):
         response = scraper.get_page("https://www.example.com")
         self.assertIsInstance(response, requests.models.Response)
 
+    def test_read_response_returns_string(self): # make sure that the read response function returns a string
+        this_should_be_a_string = scraper.read_response(requests.get("https://quotes.toscrape.com"))
+        self.assertIsInstance(this_should_be_a_string, str)
 if __name__ == '__main__':
     unittest.main()
