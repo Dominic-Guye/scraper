@@ -1,3 +1,5 @@
+# this was an initial concept, it should still be functional but is unnecessary and should be ignored or deleted
+
 import requests
 import bs4
 import html5lib
