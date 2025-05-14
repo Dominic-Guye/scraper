@@ -1,6 +1,5 @@
 import requests
 import bs4
-import html5lib
 from time import sleep # I need this to create artificial delays to allow users time to catch their breath
 
 # the requesting function
@@ -26,8 +25,6 @@ def get_page(url: str = None) -> requests.models.Response: #note: first ever typ
     print("\t\tReceived content from the page!")
     #return the response object as the function's output
     return response
-
-# response1 = response # saving function output in the general scope # ugh, screwed this up, commenting out for now
 
 def read_response(resp: requests.models.Response) -> str:
     '''Given a requests Response object, return the HTML source code'''
