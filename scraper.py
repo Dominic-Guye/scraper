@@ -63,21 +63,23 @@ def scrape(html: str):
     print("Starting the true scraping process...")
     soup = bs4.BeautifulSoup(html,'html5lib')
     while True: #  while = tag_name != "NONE": # The commented-out code failed, the loop simply ignored it
-        tag_name = input("Which HTML elements are you looking for?\nType the HTML tag name and we'll return all HTML elements in the page that match it.\n(Type 'none' (case-insensitive) to exit)\nTag name: ")
+        print("Which HTML elements are you looking for?\nType the HTML tag name (case-insensitive) and we'll return all HTML elements in the page that match it.\n(Type 'none' (also case-insensitive) to exit)")
+        tag_name = input("Tag name: ")
         #If the user inputs 'none' (not case-sensitive), then exit loop
         if tag_name.lower() in ("none", "none "): # allowing a space for exit requests so users more easily avoid PyCharm's autocomplete feature from interfering. Sadly, IDK how to do this for the tag names
             print("\t\tSince you responded with 'none', we'll stop.\n\nThank you for scraping with us! Goodbye!") #farewell message
             break
-        found_elements = soup.find_all(tag_name) # main scrape operation
+        found_elements = soup.find_all(tag_name.lower()) # main scrape operation
         if len(found_elements) > 0: # only if elements were actually found.
             #print each found element on a new line
             print(f"\t\tSuccess! We found {len(found_elements)} element(s) that match \"{tag_name}\"!") # the escaped double-quotes were PyCharm's idea, not mine
-            if len(found_elements) > 10:
-                print("\t\t\tOh my. That's a lot. HERE THEY COME!")
-                sleep(5)
+            sleep(1)
+            if len(found_elements) > 20: #special message if a lot were discovered
+                print("\t\t\tOh my. That's quite a lot of elements. HERE THEY COME!")
+                sleep(5) # let the users brace themselves
             for e in found_elements:
                 print(e)
-                print(" ---- END OF ELEMENT LIST ----" + ("\n" * 3))
+            print(" ---- END OF ELEMENT LIST ----" + ("\n" * 3))
         elif (len(found_elements) == 0) or (found_elements == None): # message if the element wasn't found
                 print(Warning(f"\t\tThe scraper was unable to find any elements of that tag name '{tag_name}'."))
 
@@ -101,6 +103,7 @@ def main(URL : str = None):
         print(failedToResolve)
     except requests.exceptions.ConnectionError as e_connection:
         print(f"\tThere was an unexpected connection-related error: {e_connection}")
+        sleep(1)
         if isinstance(e_connection.args[0],requests.packages.urllib3.exceptions.MaxRetryError):
             print("\t\tThe connection failed after multiple attempts.")
             print(f"\t\tThe reason?\n\t\t\t{e_connection.args[0].reason}") #print actual underlying error that caused the repeated attempts to fail
@@ -109,4 +112,4 @@ def main(URL : str = None):
         raise
 
 if __name__ == '__main__':
-    main(URL)
+    main()
