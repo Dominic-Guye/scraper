@@ -34,10 +34,10 @@ def read_response(resp: requests.models.Response) -> str:
     text = resp.text
     # Code to deny responses that are null or too short
     if len(text) > 10:
-        print("\tResponse read! Length is not too short as to suggest an error.")
+        print("\tResponse read! Its length is not too short as to suggest an error.")
         return text
     elif len(text) in (None, 0):
-        raise ValueError("\tThe response was null or zero.")
+        raise ValueError("\tThe website was contacted, but the response was null or zero.")
     elif text != None:
         raise requests.exceptions.RequestException(f"\tThere was a response, but it was way too short. It consisted entirely of {print(text)}.")
 
