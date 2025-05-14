@@ -81,10 +81,12 @@ def scrape(html: str):
                 print(Warning(f"\t\tThe scraper was unable to find any elements of that tag name '{tag_name}'."))
 
 #the main function
-if __name__ == '__main__':
+def main(URL : str = None):
+    '''The main function of the scraper. URL parameter is optional;
+    it will interactively ask for a URL as input if you don't provide one as an argument.'''
     try:
         print("Hi, this is my little web scraper!\n") # Greeting
-        page = get_page() # request the page and save the response into "page"
+        page = get_page(URL) # request the page and save the response into "page"
         pagetext = read_response(page) # extract the source code from the response object "page" and save it as a string into "pagetext"
         save_page(pagetext) # attempt to save the string object "pagetext" into a file. Failure here does not terminate the program.
         scrape(pagetext) # extract requested HTML elements from the source code string "pagetext"
@@ -104,3 +106,6 @@ if __name__ == '__main__':
     except Exception as e_unexpected:
         print(f"\tThere was an unexpected error: {e_unexpected}")
         raise
+
+if __name__ == '__main__':
+    main(URL)
