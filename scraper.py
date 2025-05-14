@@ -16,13 +16,14 @@ def get_page(url: str = None) -> requests.models.Response: #note: first ever typ
             url = "https://example.org"
     #do the actual request
     try:
+        print(f"\tRequesting the webpage '{url}'.")
         response = requests.get(url)
     except requests.exceptions.MissingSchema:
-        print("\tWe couldn't recognize a URL schema. I TOLD you to include an URL schema! SMH.\n\tWe're just going to use 'https://'.")
+        print("\t\tWe couldn't recognize a URL schema. I TOLD you to include an URL schema! SMH.\n\t\tWe're just going to use 'https://'.")
         response = requests.get("https://" + url)
     #do not continue and just raise an exception if there is an HTTP error code
     response.raise_for_status()
-    print("\tReceived content from the page!")
+    print("\t\tReceived content from the page!")
     #return the response object as the function's output
     return response
 
@@ -80,12 +81,13 @@ def scrape(html: str):
             for e in found_elements:
                 print(e)
             print(" ---- END OF ELEMENT LIST ----" + ("\n" * 3))
+            sleep(1)
         elif (len(found_elements) == 0) or (found_elements == None): # message if the element wasn't found
                 print(Warning(f"\t\tThe scraper was unable to find any elements of that tag name '{tag_name}'."))
 def redo_request():
     '''This function is to retry the scraping operation with a message if the get_page() web request fails.'''
     sleep(1)
-    print(("\n" * 5) + "Well that happened. Let's try this again.")
+    print(("\n" * 2) + "Well, that happened. Let's try this again.")
     sleep(3)
     main()
 #the main function
