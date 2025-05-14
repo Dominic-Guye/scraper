@@ -48,8 +48,8 @@ def save_page(html: str): #save the html to a file
     title_v = title.replace("|","\u00a6") # replace pipes ('|') since they're common in titles and file systems hate them, and replace them with broken pipes ('¦')
     constructed_file_name = f"{title_v} \u2014 {datetime.now().timestamp()}.html"
     try: # I'm very concerned about IO errors, they are so common.
-        with open(constructed_file_name, "wt") as file: #including date as part of the file name to ensure unique names
-            file.write(html)
+        with open(constructed_file_name, "wt") as file: # I'm including the date as part of the file name to ensure unique file names
+            file.write(html) # the actual write operation
             file.close()
             print("\tFile saved!")
     except IOError as save_error:
@@ -64,8 +64,7 @@ def scrape(html: str):
     while True: #  while = tag_name != "NONE": # The commented-out code failed, the loop simply ignored it
         tag_name = input("Which HTML elements are you looking for?\nType the HTML tag name and we'll return all HTML elements in the page that match it.\n(Type 'none' (case-insensitive) to exit)\nTag name: ")
         #If the user inputs 'none' (not case-sensitive), then exit loop
-        if tag_name.lower() == "none":
-            print("Since you responded with 'none', we'll stop.\nThank you for scraping with us!") #farewell message
+        if tag_name.lower() in ("none", "none "): # allowing a space for exit requests so users more easily avoid PyCharm's autocomplete feature from interfering. Sadly, IDK how to do this for the tag names
             print("\t\tSince you responded with 'none', we'll stop.\n\nThank you for scraping with us!") #farewell message
             break
         found_elements = soup.find_all(tag_name) # main scrape operation
@@ -84,6 +83,7 @@ def scrape(html: str):
 #the main function
 if __name__ == '__main__':
     try:
+        print("Hi, this is my little web scraper!\n") # Greeting
         page = get_page() # request the page and save the response into "page"
         pagetext = read_response(page) # extract the source code from the response object "page" and save it as a string into "pagetext"
         save_page(pagetext) # attempt to save the string object "pagetext" into a file. Failure here does not terminate the program.
@@ -99,8 +99,6 @@ if __name__ == '__main__':
     except requests.exceptions.ConnectionError as e_connection:
         print(f"\tThere was an unexpected connection-related error: {e_connection}")
         if isinstance(e_connection.args[0],requests.packages.urllib3.exceptions.MaxRetryError):
-            print("The connection failed after multiple attempts.")
-            print(f"The reason? {e_connection.args[0].reason}") #print actual underlying error that caused the repeated attempts to fail
             print("\t\tThe connection failed after multiple attempts.")
             print(f"\t\tThe reason?\n\t\t\t{e_connection.args[0].reason}") #print actual underlying error that caused the repeated attempts to fail
     except Exception as e_unexpected:
