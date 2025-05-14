@@ -72,7 +72,7 @@ def scrape(html: str):
             #print each found element on a new line
             print(f'Success! We found {len(found_elements)} element(s) that match {tag_name}!')
             if len(found_elements) > 10:
-                print("Oh my. HERE THEY COME!")
+                print("Oh my. That's a lot. HERE THEY COME!")
                 sleep(5)
             for e in found_elements:
                 print(e)
@@ -82,12 +82,12 @@ def scrape(html: str):
 #the main function
 if __name__ == '__main__':
     try:
-        page = get_page()
-        pagetext = read_response(page)
-        save_page(pagetext)
-        scrape(pagetext)
-    except requests.exceptions.HTTPError as http:
-        print(f"Ugh. There was an HTTP status code! Specifically, it was {http}.")
+        page = get_page() # request the page and save the response into "page"
+        pagetext = read_response(page) # extract the source code from the response object "page" and save it as a string into "pagetext"
+        save_page(pagetext) # attempt to save the string object "pagetext" into a file. Failure here does not terminate the program.
+        scrape(pagetext) # extract requested HTML elements from the source code string "pagetext"
+    except requests.exceptions.HTTPError as http_err:
+        print(f"Ugh. There was an HTTP status code! Specifically, it was {http_err}.")
     except requests.Timeout as timed_out:
         print("The connection timed out. Sorry.")
         print(timed_out)
@@ -98,7 +98,7 @@ if __name__ == '__main__':
         print(f"There was an unexpected connection-related error: {e_connection}")
         if isinstance(e_connection.args[0],requests.packages.urllib3.exceptions.MaxRetryError):
             print("The connection failed after multiple attempts.")
-            print(f"The reason? {e_connection.args[0].reason}") #print actual error that caused the failure
+            print(f"The reason? {e_connection.args[0].reason}") #print actual underlying error that caused the repeated attempts to fail
     except Exception as e_unexpected:
         print(f"There was an unexpected error: {e_unexpected}")
         raise
