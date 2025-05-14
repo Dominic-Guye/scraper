@@ -65,7 +65,7 @@ def scrape(html: str):
         tag_name = input("Which HTML elements are you looking for?\nType the HTML tag name and we'll return all HTML elements in the page that match it.\n(Type 'none' (case-insensitive) to exit)\nTag name: ")
         #If the user inputs 'none' (not case-sensitive), then exit loop
         if tag_name.lower() in ("none", "none "): # allowing a space for exit requests so users more easily avoid PyCharm's autocomplete feature from interfering. Sadly, IDK how to do this for the tag names
-            print("\t\tSince you responded with 'none', we'll stop.\n\nThank you for scraping with us!") #farewell message
+            print("\t\tSince you responded with 'none', we'll stop.\n\nThank you for scraping with us! Goodbye!") #farewell message
             break
         found_elements = soup.find_all(tag_name) # main scrape operation
         if len(found_elements) > 0: # only if elements were actually found.
