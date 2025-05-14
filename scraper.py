@@ -93,7 +93,6 @@ def main(URL : str = None):
     '''The main function of the scraper. URL parameter is optional;
     it will interactively ask for a URL as input if you don't provide one as an argument.'''
     try:
-        print("Hi, this is my little web scraper!\n") # Greeting
         page = get_page(URL) # request the page and save the response into "page"
         pagetext = read_response(page) # extract the source code from the response object "page" and save it as a string into "pagetext"
         save_page(pagetext) # attempt to save the string object "pagetext" into a file. Failure here does not terminate the program.
@@ -126,4 +125,5 @@ def main(URL : str = None):
 
 
 if __name__ == '__main__':
+    print("Hi, this is my little web scraper!\n")  # Greeting
     main()
