@@ -7,7 +7,8 @@ from time import sleep # I need this to create artificial delays to allow users 
 def get_page(url: str = None) -> requests.models.Response: #note: first ever type hint!
     # Ask that the user input a URL if none was given
     if url == None:
-        inputted_url = input("What page do you want to request? Include the URL schema (we only support 'http://' and 'https://' for now) in your input. ")
+        print("What page do you want to request? Include the URL schema (we only support 'http://' and 'https://' for now) in your input. ")
+        inputted_url = input("Webpage to scrape: ")
         if inputted_url != None and len(inputted_url) > 0:
             url = inputted_url
         else: #if no url is given, use example.org
