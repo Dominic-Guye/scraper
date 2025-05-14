@@ -82,7 +82,10 @@ def scrape(html: str):
             print(" ---- END OF ELEMENT LIST ----" + ("\n" * 3))
         elif (len(found_elements) == 0) or (found_elements == None): # message if the element wasn't found
                 print(Warning(f"\t\tThe scraper was unable to find any elements of that tag name '{tag_name}'."))
-
+def redo_request():
+    '''This function is to retry the scraping operation with a message if the get_page() web request fails.'''
+    print(("\n" * 5) + "Well that happened. Let's try this again.")
+    main()
 #the main function
 def main(URL : str = None):
     '''The main function of the scraper. URL parameter is optional;
@@ -95,21 +98,30 @@ def main(URL : str = None):
         scrape(pagetext) # extract requested HTML elements from the source code string "pagetext"
     except requests.exceptions.HTTPError as http_err:
         print(f"\tUgh. There was an HTTP status code! Specifically, it was {http_err}.")
+        redo_request()
     except requests.Timeout as timed_out:
         print("\tThe connection timed out. Sorry.")
         print(timed_out)
+        redo_request()
     except requests.packages.urllib3.exceptions.NameResolutionError as failedToResolve:
         print("\tWe were unable to resolve that name to a particular IP address.\nEither the DNS servers are not functioning properly, or the website you requested simply does not exist.")
         print(failedToResolve)
+        redo_request()
     except requests.exceptions.ConnectionError as e_connection:
         print(f"\tThere was an unexpected connection-related error: {e_connection}")
         sleep(1)
         if isinstance(e_connection.args[0],requests.packages.urllib3.exceptions.MaxRetryError):
             print("\t\tThe connection failed after multiple attempts.")
             print(f"\t\tThe reason?\n\t\t\t{e_connection.args[0].reason}") #print actual underlying error that caused the repeated attempts to fail
+        redo_request()
+    except requests.exceptions.InvalidURL as bad_url_err:
+        print("\tThe URL has been reject as invalid. Most likely, it couldn't tell what the name of the website was.")
+        print(bad_url_err)
+        redo_request()
     except Exception as e_unexpected:
         print(f"\tThere was an unexpected error: {e_unexpected}")
-        raise
+        redo_request()
+
 
 if __name__ == '__main__':
     main()
