@@ -11,17 +11,17 @@ def get_page(url: str = None) -> requests.models.Response: #note: first ever typ
         if inputted_url != None and len(inputted_url) > 0:
             url = inputted_url
         else: #if no url is given, use example.org
-            print("It doesn't seem like you provided any input. We'll use http://example.org instead.")
+            print("\tIt doesn't seem like you provided any input. We'll use http://example.org instead.")
             url = "http://example.org"
     #do the actual request
     try:
         response = requests.get(url)
     except requests.exceptions.MissingSchema:
-        print("We couldn't recognize a URL schema. I TOLD you to include an URL schema! SMH.\nWe're just going to use 'https://'.")
+        print("\tWe couldn't recognize a URL schema. I TOLD you to include an URL schema! SMH.\n\tWe're just going to use 'https://'.")
         response = requests.get("https://" + url)
     #do not continue and just raise an exception if there is an HTTP error code
     response.raise_for_status()
-    print("Recieved content from the page!")
+    print("\tReceived content from the page!")
     #return the response object as the function's output
     return response
 
@@ -33,12 +33,12 @@ def read_response(resp: requests.models.Response) -> str:
     text = resp.text
     # Code to deny responses that are null or too short
     if len(text) > 10:
-        print("Response read! Length is not too short as to suggest an error.")
+        print("\tResponse read! Length is not too short as to suggest an error.")
         return text
     elif len(text) in (None, 0):
-        raise ValueError("The response was null or zero.")
+        raise ValueError("\tThe response was null or zero.")
     elif text != None:
-        raise requests.exceptions.RequestException(f"There was a response, but it was way too short. It consisted entirely of {print(text)}.")
+        raise requests.exceptions.RequestException(f"\tThere was a response, but it was way too short. It consisted entirely of {print(text)}.")
 
 def save_page(html: str): #save the html to a file
     print("Attempting to save the page to a file...")
@@ -51,11 +51,11 @@ def save_page(html: str): #save the html to a file
         with open(constructed_file_name, "wt") as file: #including date as part of the file name to ensure unique names
             file.write(html)
             file.close()
-            print("File saved!")
+            print("\tFile saved!")
     except IOError as save_error:
-        print(f"There was an error when attempting to save the page to a file: {save_error}.\nOh well. Moving on to the rest of the program.")
+        print(f"\tThere was an error when attempting to save the page to a file: {save_error}.\n\t\tOh well. Moving on to the rest of the program.")
     except UnicodeEncodeError as encode_err:
-        print(f"There was an error when trying to encode page into Unicode: {encode_err}.\nOh well. Moving on to the rest of the program.")
+        print(f"\tThere was an error when trying to encode page into Unicode: {encode_err}.\n\t\tOh well. Moving on to the rest of the program.")
 
 def scrape(html: str):
     '''Scrape an HTML document. HTML should be in the form of a string'''
@@ -66,18 +66,20 @@ def scrape(html: str):
         #If the user inputs 'none' (not case-sensitive), then exit loop
         if tag_name.lower() == "none":
             print("Since you responded with 'none', we'll stop.\nThank you for scraping with us!") #farewell message
+            print("\t\tSince you responded with 'none', we'll stop.\n\nThank you for scraping with us!") #farewell message
             break
         found_elements = soup.find_all(tag_name) # main scrape operation
         if len(found_elements) > 0: # only if elements were actually found.
             #print each found element on a new line
-            print(f'Success! We found {len(found_elements)} element(s) that match {tag_name}!')
+            print(f"\t\tSuccess! We found {len(found_elements)} element(s) that match \"{tag_name}\"!") # the escaped double-quotes were PyCharm's idea, not mine
             if len(found_elements) > 10:
-                print("Oh my. That's a lot. HERE THEY COME!")
+                print("\t\t\tOh my. That's a lot. HERE THEY COME!")
                 sleep(5)
             for e in found_elements:
                 print(e)
+                print(" ---- END OF ELEMENT LIST ----" + ("\n" * 3))
         elif (len(found_elements) == 0) or (found_elements == None): # message if the element wasn't found
-                print(Warning("The scraper was unable to find any elements of that tag name."))
+                print(Warning(f"\t\tThe scraper was unable to find any elements of that tag name '{tag_name}'."))
 
 #the main function
 if __name__ == '__main__':
@@ -87,18 +89,20 @@ if __name__ == '__main__':
         save_page(pagetext) # attempt to save the string object "pagetext" into a file. Failure here does not terminate the program.
         scrape(pagetext) # extract requested HTML elements from the source code string "pagetext"
     except requests.exceptions.HTTPError as http_err:
-        print(f"Ugh. There was an HTTP status code! Specifically, it was {http_err}.")
+        print(f"\tUgh. There was an HTTP status code! Specifically, it was {http_err}.")
     except requests.Timeout as timed_out:
-        print("The connection timed out. Sorry.")
+        print("\tThe connection timed out. Sorry.")
         print(timed_out)
     except requests.packages.urllib3.exceptions.NameResolutionError as failedToResolve:
-        print("We were unable to resolve that name to a particular IP address.\nEither the DNS servers are not functioning properly, or the website you requested simple does not exist.")
+        print("\tWe were unable to resolve that name to a particular IP address.\nEither the DNS servers are not functioning properly, or the website you requested simply does not exist.")
         print(failedToResolve)
     except requests.exceptions.ConnectionError as e_connection:
-        print(f"There was an unexpected connection-related error: {e_connection}")
+        print(f"\tThere was an unexpected connection-related error: {e_connection}")
         if isinstance(e_connection.args[0],requests.packages.urllib3.exceptions.MaxRetryError):
             print("The connection failed after multiple attempts.")
             print(f"The reason? {e_connection.args[0].reason}") #print actual underlying error that caused the repeated attempts to fail
+            print("\t\tThe connection failed after multiple attempts.")
+            print(f"\t\tThe reason?\n\t\t\t{e_connection.args[0].reason}") #print actual underlying error that caused the repeated attempts to fail
     except Exception as e_unexpected:
-        print(f"There was an unexpected error: {e_unexpected}")
+        print(f"\tThere was an unexpected error: {e_unexpected}")
         raise
